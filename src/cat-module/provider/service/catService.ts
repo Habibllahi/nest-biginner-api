@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Cat } from 'src/model/cat';
+import { Cat } from 'src/cat-module/model/cat';
+
 
 @Injectable()
 export class CatService {

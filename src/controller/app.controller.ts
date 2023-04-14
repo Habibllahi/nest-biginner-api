@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Query, Req, Res } from '@nestjs/common';
-import { AppService } from '../provider/service/app.service';
 import { Request, Response } from 'express';
 import { Message } from '../type/message';
 import { Ping } from '../type/pint';
+import { AppService } from '../provider/service/app.service';
 
 @Controller('api/v1')
 export class AppController {
