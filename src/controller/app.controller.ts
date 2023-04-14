@@ -1,10 +1,13 @@
-import { Body, Controller, Get, Post, Query, Req, Res } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Post, Query, Req, Res, UseFilters } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { Message } from '../type/message';
 import { Ping } from '../type/pint';
 import { AppService } from '../provider/service/app.service';
+import { CatNotFoundExceptionHandler } from 'src/exception/handler/customexception';
+import { CatNotFoundException } from 'src/exception/catNotFoundException';
 
 @Controller('api/v1')
+@UseFilters(CatNotFoundExceptionHandler)
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
@@ -32,5 +35,21 @@ export class AppController {
   @Post('ping4')
   async getHello4(@Query('greetings') greetings: string): Promise<Ping> {
     return { res: greetings };
+  }
+
+  @Get('ping5')
+  async getHello5(@Query('greetings') greetings: string): Promise<Ping> {
+    throw new CatNotFoundException(
+      {
+        status: HttpStatus.FORBIDDEN,
+        code: 100,
+        message: 'Can Not find Cat entity'
+      },
+      HttpStatus.FORBIDDEN,
+      {
+        cause: new Error(),
+        description: 'dont know the cause',
+      },
+    );
   }
 }

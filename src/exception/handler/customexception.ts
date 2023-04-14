@@ -1,12 +1,13 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
-import { CatNotFoundEsception } from '../catNotFoundException';
-import { Request, Response } from 'express';
+import { ArgumentsHost, Catch, ExceptionFilter } from "@nestjs/common";
+import { Request, Response } from "express";
+import { CatNotFoundException } from "../catNotFoundException";
 
-@Catch(CatNotFoundEsception)
-export class CatNotFoundException
-  implements ExceptionFilter<CatNotFoundEsception>
+
+@Catch(CatNotFoundException)
+export class CatNotFoundExceptionHandler
+  implements ExceptionFilter<CatNotFoundException>
 {
-  catch(exception: CatNotFoundEsception, host: ArgumentsHost) {
+  catch(exception: CatNotFoundException, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const res = ctx.getResponse<Response>();
     const req = ctx.getRequest<Request>();

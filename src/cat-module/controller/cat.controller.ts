@@ -6,27 +6,29 @@ import {
   HttpException,
   HttpStatus,
   Post,
+  UseFilters,
 } from '@nestjs/common';
 import { CatService } from '../provider/service/catService';
 import { Cat } from '../model/cat';
-import { CatNotFoundEsception } from 'src/exception/catNotFoundException';
+import { CatNotFoundException } from 'src/exception/catNotFoundException';
+import { CatNotFoundExceptionHandler } from 'src/exception/handler/customexception';
 
 @Controller('api/v1')
 export class CatController {
   constructor(private catService: CatService) {}
 
   @Get('cat')
-  public findAll() {
-    this.catService.findAll();
+  public async findAll(): Promise<Cat[]> {
+    return this.catService.findAll();
   }
 
   @Post('cat')
-  public createCat(@Body() cat: Cat) {
-    this.catService.create(cat);
+  public async createCat(@Body() cat: Cat): Promise<void> {
+    return this.catService.create(cat);
   }
 
   @Get('ex1')
-  public hitException1() {
+  public async  hitException1(): Promise<void>{
     throw new HttpException(
       { xyz: 'testing someting', pqt: 'still testing' },
       HttpStatus.FORBIDDEN,
@@ -34,12 +36,12 @@ export class CatController {
   }
 
   @Get('ex2')
-  public hitException2() {
+  public async hitException2(): Promise<void> {
     throw new HttpException('testing something', HttpStatus.FORBIDDEN);
   }
 
   @Get('ex3')
-  public hitException3() {
+  public async hitException3(): Promise<void> {
     throw new HttpException(
       'testing something with optional',
       HttpStatus.FORBIDDEN,
@@ -51,7 +53,7 @@ export class CatController {
   }
 
   @Get('ex4')
-  public hitException4() {
+  public async hitException4(): Promise<void> {
     throw new BadRequestException({
       xyz: 'testing someting',
       pqt: 'still testing',
@@ -59,9 +61,14 @@ export class CatController {
   }
 
   @Get('ex5')
-  public hitException5() {
-    throw new CatNotFoundEsception(
-      'testing something with optional',
+  @UseFilters(CatNotFoundExceptionHandler)
+  public async hitException5(): Promise<void> {
+    throw new CatNotFoundException(
+      {
+        status: HttpStatus.FORBIDDEN,
+        code: 100,
+        message: 'Can Not find Cat entity'
+      },
       HttpStatus.FORBIDDEN,
       {
         cause: new Error(),
@@ -70,3 +77,4 @@ export class CatController {
     );
   }
 }
+
